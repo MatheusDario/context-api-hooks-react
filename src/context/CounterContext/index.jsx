@@ -1,20 +1,26 @@
+/* eslint-disable no-unused-vars */
 import P from 'prop-types';
-import { useState } from 'react';
+import { useReducer, useRef, useState } from 'react';
 import { useContext } from 'react';
 import { createContext } from 'react';
+import { reducer } from './reducer';
+import { buildActions } from './build-actions';
 
 const Context = createContext();
 
-const initalState = {
+export const initalState = {
   counter: 0,
   loading: false,
 };
 
 export const CounterContextProvider = ({ children }) => {
-  const [state, dispatch] = useState(initalState);
+  const [state, dispatch] = useReducer(reducer, initalState);
+  const actions = useRef(buildActions(dispatch));
 
   return (
-    <Context.Provider value={[state, dispatch]}>{children}</Context.Provider>
+    <Context.Provider value={[state, actions.current]}>
+      {children}
+    </Context.Provider>
   );
 };
 
